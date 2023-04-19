@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Iterator;
 
 /**
  * La clase caldero modela un recipiente para preparar pocimas.
@@ -32,8 +33,11 @@ public class Caldero {
      * @param capacidad Capacidad maxima de ingredientes.
      */
     public Caldero (String nombre, Integer capacidad) {
-        // TODO - Implementar metodo
-        MAX_INGREDIENTES = 0; // Ojo, esta linea no es valida
+        this.nombre = nombre;
+        this.elementos = new TreeMap<String, Elemento>();
+        this.pocima = null;
+        this.receta = null;
+        this.MAX_INGREDIENTES = capacidad; // Ojo, esta linea no es valida
     }
 
     /**
@@ -57,8 +61,21 @@ public class Caldero {
      * @param receta La receta a incorporar.
      */
     public void setReceta (Receta receta) {
-        // TODO - Implementar metodo
+        if (
+            receta.getCantidadIngredientes() <= this.getCapacidad() &&
+            this.receta == null &&
+            this.pocima == null
+        ) {
+            this.receta = receta;
 
+            Iterator<String> ingredienteEnLaRecetaIterator = this.receta.getIngredientes().iterator();
+            while(ingredienteEnLaRecetaIterator.hasNext()) {
+                String ingredienteEnLaReceta = ingredienteEnLaRecetaIterator.next();
+                this.elementos.put(ingredienteEnLaReceta, null);
+            }
+        } else {
+            System.out.println(this.getNombre() + ": No se puede agregar la receta");
+        }
     }
 
     /**
@@ -72,8 +89,7 @@ public class Caldero {
      * @param ingrediente El ingrediente a incorporar al caldero.
      */
     public void addIngrediente (Elemento ingrediente) {
-        // TODO - Implementar metodo
-
+        this.elementos.put(ingrediente.getNombre(), ingrediente);
     }
 
     /**
@@ -88,8 +104,17 @@ public class Caldero {
      * @return La lista con los nombres de los ingredientes faltantes.
      */
     public List<String> getIngredientesFaltantes () {
-        // TODO - Implementar metodo
-        return null;
+        ArrayList<String> ingredientesFaltantes = new ArrayList<String>();
+        Iterator<String> ingredienteEnLaRecetaIterator = this.receta.getIngredientes().iterator();
+
+        while(ingredienteEnLaRecetaIterator.hasNext()) {
+            String ingredienteEnLaReceta = ingredienteEnLaRecetaIterator.next();
+
+            if (this.getIngredientes().get(ingredienteEnLaReceta) == null) {
+                ingredientesFaltantes.add(ingredienteEnLaReceta);
+            }
+        }
+        return ingredientesFaltantes;
     }
 
     /**
@@ -99,8 +124,11 @@ public class Caldero {
      *         false si falta al menos uno.
      */
     public Boolean verificarIngredientes () {
-        // TODO - Implementar metodo
-        return null;
+        if(this.getIngredientesFaltantes().isEmpty() && this.receta != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -122,7 +150,22 @@ public class Caldero {
      * donde <nombre> es el nombre del caldero 
      */
     public void prepararPocima () {
-        // TODO - Implementar metodo
+        if(this.verificarIngredientes()) {
+            
+            //gettign the total weight of the elements
+            Integer pesoTotalDeLosElementos = 0;
+            Iterator<Elemento> elementosDelCalderoIterator = this.elementos.values().iterator();
+            while (elementosDelCalderoIterator.hasNext()) {
+                Elemento elementoDelCaldero = elementosDelCalderoIterator.next();
+                pesoTotalDeLosElementos += elementoDelCaldero.getPeso();
+            }
+
+            this.pocima = new Elemento("Pocima de " + this.receta.getNombre(), pesoTotalDeLosElementos);
+            this.receta = null;
+            this.elementos.clear();
+        } else {
+            System.out.println(this.getNombre() + ": No se puede preparar la pocima");
+        }
 
     }
 
@@ -132,8 +175,12 @@ public class Caldero {
      * @return La pocima preparada.
      */
     public Elemento getPocima() {
-        // TODO - Implementar metodo
-        return null;
+        Elemento pocimaToReturn = null;
+        if(this.pocima != null) {
+            pocimaToReturn = new Elemento(this.pocima.getNombre(), this.pocima.getPeso());
+        }
+        this.pocima = null;
+        return pocimaToReturn;
     }
 
     /**
@@ -155,8 +202,13 @@ public class Caldero {
      */
     @Override
     public String toString() {
-        // TODO - Implementar metodo
-        return null;
+        if (this.receta != null) {
+            return this.nombre + ": " + this.receta.getNombre();
+        } else if (this.pocima != null) {
+            return this.nombre + ": " + this.pocima.getNombre();
+        } else {
+            return this.nombre + ": vacio";
+        }
     }
 
     /**
