@@ -2,6 +2,10 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.swing.text.html.parser.Element;
+
+import java.util.Iterator;
+
 /** 
  * Modela la bolsa que utiliza el Personaje para
  * transportar elementos. La capacidad se determina por
@@ -29,8 +33,10 @@ public class Bolsa {
      * @param peso El peso maximo que puede contener la bolsa
      */
     public Bolsa (String nombre, int peso) {
-        // TODO - Implementar metodo
-        PESO_MAXIMO = 0; // Ojo, esta linea no es valida
+        this.nombre = nombre;
+        this.PESO_MAXIMO = peso;
+        this.pesoActual = 0;
+        this.porNombre = new TreeMap<String, Elemento>();
     }
 
     /**
@@ -51,8 +57,15 @@ public class Bolsa {
      * @param obj El elemento a agregar en la bolsa.
      */
     public void addElemento (Elemento obj) {
-        // TODO - Implementar metodo
-
+        if (
+            this.porNombre.get(obj.getNombre()) == null &&
+            obj.getPeso() <= this.getPesoLibre()
+        ) {
+            this.porNombre.put(obj.getNombre(), obj);
+            this.addPeso(obj.getPeso());
+        } else {
+            System.out.println(this.nombre + ": No se puede agregar " + obj.getNombre());
+        }
     }
 
     /**
@@ -63,8 +76,9 @@ public class Bolsa {
      * @return el elemento eliminado, o null si no existe ese elemento a remover
      */
     public Elemento delElemento (String nombre) {
-        // TODO - Implementar metodo
-        return null;
+        Elemento elementoEliminado =  this.porNombre.remove(nombre);
+        this.addPeso(-elementoEliminado.getPeso());
+        return elementoEliminado;
     }
 
     /**
@@ -73,8 +87,13 @@ public class Bolsa {
      * @return ArrayList<Elemento> lista con los elementos de la bolsa.
      */
     public ArrayList<Elemento> getElementosEnLaBolsa() {
-        // TODO - Implementar metodo
-        return null;
+        ArrayList<Elemento> listaDeElementos = new ArrayList<Elemento>();
+        Iterator<Elemento> elementosIterator = this.getMapaDeElementos().values().iterator();
+        while(elementosIterator.hasNext()) {
+            Elemento elemento = elementosIterator.next();
+            listaDeElementos.add(elemento);
+        }
+        return listaDeElementos;
     }
 
     /**
@@ -86,8 +105,17 @@ public class Bolsa {
      * cumplen con el criterio.
      */
     public ArrayList<Elemento> getElementosConPrefijo(String pre) {
-        // TODO - Implementar metodo
-        return null;
+        ArrayList<Elemento> elementosConPrefijo = new ArrayList<Elemento>();
+        Iterator<String> elementosIterator = this.getMapaDeElementos().keySet().iterator();
+
+        while(elementosIterator.hasNext()) {
+            String elemento = elementosIterator.next();
+
+            if(elemento.startsWith(pre)) {
+                elementosConPrefijo.add(this.getMapaDeElementos().get(elemento));
+            }
+        }
+        return elementosConPrefijo;
     }
 
     /**
@@ -98,8 +126,8 @@ public class Bolsa {
      * @return El peso máximo a agregar.
      */
     public int getPesoLibre () {
-        // TODO - Implementar metodo
-        return -1;
+        return this.getPesoMaximo() - this.getPesoActual();
+        
     }
 
     /**
@@ -109,8 +137,7 @@ public class Bolsa {
      *   @param peso El peso a quitar/agregar.
      */
     public void addPeso (int peso) {
-        // TODO - Implementar metodo
-
+        this.setPesoActual(this.getPesoActual() + peso);
     }
 
     public int getPesoActual() {
