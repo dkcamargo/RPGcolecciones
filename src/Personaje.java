@@ -1,3 +1,5 @@
+import java.util.Iterator;
+
 /**
  * Esta clase modela un personaje de un juego de rol.
  */
@@ -28,9 +30,12 @@ public class Personaje {
      * @param peso El peso maximo que puede transportar el personaje.
      */
     public Personaje (String nombre, Integer vida, Integer peso) {
-        // TODO - Implementar metodo
-        MAX_VIDA = 0;          // Ojo, esta linea no es valida
-        PESO_MAXIMO_BOLSA = 0; // Ojo, esta linea no es valida
+        this.nombre = nombre;
+        this.vida = vida;
+        this.MAX_VIDA = vida;
+        this.PESO_MAXIMO_BOLSA = peso;
+        this.objeto = null;
+        this.bolsa = null;
     }
 
     /**
@@ -49,7 +54,24 @@ public class Personaje {
      * @param bolsa La nueva bolsa del personaje.
      */
     public void setBolsa(Bolsa bolsa) {
-        // TODO - Implementar metodo
+        if(bolsa.getPesoMaximo() <= this.PESO_MAXIMO_BOLSA) {
+            if(this.bolsa != null) {
+                if(this.bolsa.getPesoMaximo() < bolsa.getPesoMaximo()) {
+                    Iterator<Elemento> elementosEnLaBolsaAntiguaIterator = this.bolsa.getElementosEnLaBolsa().iterator();
+                    while(elementosEnLaBolsaAntiguaIterator.hasNext()) {
+                        Elemento elementoEnLaBolsaAntigua = elementosEnLaBolsaAntiguaIterator.next();
+                        bolsa.addElemento(elementoEnLaBolsaAntigua);
+                    }
+                    this.bolsa = bolsa;
+                } else {
+                    System.out.println("Bolsa inapropiada");
+                }
+            } else {
+                this.bolsa = bolsa;
+            }
+        } else {
+            System.out.println("Bolsa inapropiada");
+        }
 
     }
 
@@ -70,8 +92,16 @@ public class Personaje {
      * para agregar a la bolsa"
      */
     public void guardarElemento() {
-        // TODO - Implementar metodo
-
+        if(
+            this.objeto != null &&
+            this.getBolsa() != null &&
+            this.getBolsa().getPesoLibre() >= this.objeto.getPeso()
+        ) {
+            this.getBolsa().addElemento(this.objeto);
+            this.objeto = null;
+        } else {
+            System.out.println("No hay elemento para agregar a la bolsa");
+        }
     }
 
     /**
@@ -85,7 +115,12 @@ public class Personaje {
      * @param nombre El elemento a tomar de la bolsa.
      */
     public void tomarElemento (String nombre) {
-        // TODO - Implementar metodo
+        Elemento elementoTomado = this.bolsa.delElemento(nombre);
+        if(elementoTomado != null) {
+            this.objeto = elementoTomado;
+        } else {
+            System.out.println("No se cuenta con el " + nombre);
+        }
 
     }
     
@@ -122,8 +157,23 @@ public class Personaje {
      * @param receta
      */
     public void prepararReceta (Receta receta) {
-        // TODO - Implementar metodo
+        int elementosFaltanterCounter = 0;
 
+        this.getCaldero().setReceta(receta);
+        Iterator<String> ingredientesParaLaRecetaIterator = this.getCaldero().getIngredientesFaltantes().iterator();
+        
+        while(ingredientesParaLaRecetaIterator.hasNext()) {
+            Elemento ingredienteParaLaReceta = this.getBolsa().delElemento(ingredientesParaLaRecetaIterator.next());
+            if (ingredienteParaLaReceta != null) {
+                this.getCaldero().addIngrediente(objeto);
+            } else {
+                elementosFaltanterCounter += 1;
+            }
+        }
+
+        if(elementosFaltanterCounter > 0) {
+            System.out.println("Faltan " + elementosFaltanterCounter + " ingredientes para " + receta.getNombre());
+        }
     }
 
     public String getNombre() {
