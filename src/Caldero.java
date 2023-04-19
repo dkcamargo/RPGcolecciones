@@ -202,10 +202,10 @@ public class Caldero {
      */
     @Override
     public String toString() {
-        if (this.receta != null) {
-            return this.nombre + ": " + this.receta.getNombre();
-        } else if (this.pocima != null) {
+        if (this.pocima != null) {
             return this.nombre + ": " + this.pocima.getNombre();
+        } else if (this.receta != null) {
+            return this.nombre + ": " + this.receta.getNombre();
         } else {
             return this.nombre + ": vacio";
         }

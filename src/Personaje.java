@@ -1,4 +1,3 @@
-import java.util.Iterator;
 
 /**
  * Esta clase modela un personaje de un juego de rol.
@@ -57,9 +56,7 @@ public class Personaje {
         if(bolsa.getPesoMaximo() <= this.PESO_MAXIMO_BOLSA) {
             if(this.bolsa != null) {
                 if(this.bolsa.getPesoMaximo() < bolsa.getPesoMaximo()) {
-                    Iterator<Elemento> elementosEnLaBolsaAntiguaIterator = this.bolsa.getElementosEnLaBolsa().iterator();
-                    while(elementosEnLaBolsaAntiguaIterator.hasNext()) {
-                        Elemento elementoEnLaBolsaAntigua = elementosEnLaBolsaAntiguaIterator.next();
+                    for (Elemento elementoEnLaBolsaAntigua: this.bolsa.getElementosEnLaBolsa()) {
                         bolsa.addElemento(elementoEnLaBolsaAntigua);
                     }
                     this.bolsa = bolsa;
@@ -160,12 +157,11 @@ public class Personaje {
         int elementosFaltanterCounter = 0;
 
         this.getCaldero().setReceta(receta);
-        Iterator<String> ingredientesParaLaRecetaIterator = this.getCaldero().getIngredientesFaltantes().iterator();
+        for (String ingredientesParaLaRecetaIterator : this.getCaldero().getIngredientesFaltantes()) {
+            Elemento ingredienteParaLaReceta = this.getBolsa().delElemento(ingredientesParaLaRecetaIterator);
         
-        while(ingredientesParaLaRecetaIterator.hasNext()) {
-            Elemento ingredienteParaLaReceta = this.getBolsa().delElemento(ingredientesParaLaRecetaIterator.next());
             if (ingredienteParaLaReceta != null) {
-                this.getCaldero().addIngrediente(objeto);
+                this.getCaldero().addIngrediente(ingredienteParaLaReceta);
             } else {
                 elementosFaltanterCounter += 1;
             }
@@ -173,6 +169,8 @@ public class Personaje {
 
         if(elementosFaltanterCounter > 0) {
             System.out.println("Faltan " + elementosFaltanterCounter + " ingredientes para " + receta.getNombre());
+        } else {
+            this.getCaldero().prepararPocima();
         }
     }
 

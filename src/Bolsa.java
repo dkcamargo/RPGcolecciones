@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Iterator;
 
 /** 
  * Modela la bolsa que utiliza el Personaje para
@@ -85,9 +84,7 @@ public class Bolsa {
      */
     public ArrayList<Elemento> getElementosEnLaBolsa() {
         ArrayList<Elemento> listaDeElementos = new ArrayList<Elemento>();
-        Iterator<Elemento> elementosIterator = this.getMapaDeElementos().values().iterator();
-        while(elementosIterator.hasNext()) {
-            Elemento elemento = elementosIterator.next();
+        for (Elemento elemento: this.getMapaDeElementos().values()) {
             listaDeElementos.add(elemento);
         }
         return listaDeElementos;
@@ -103,11 +100,7 @@ public class Bolsa {
      */
     public ArrayList<Elemento> getElementosConPrefijo(String pre) {
         ArrayList<Elemento> elementosConPrefijo = new ArrayList<Elemento>();
-        Iterator<String> elementosIterator = this.getMapaDeElementos().keySet().iterator();
-
-        while(elementosIterator.hasNext()) {
-            String elemento = elementosIterator.next();
-
+        for(String elemento: this.getMapaDeElementos().keySet()) {
             if(elemento.startsWith(pre)) {
                 elementosConPrefijo.add(this.getMapaDeElementos().get(elemento));
             }
