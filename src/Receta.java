@@ -1,3 +1,4 @@
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -19,7 +20,7 @@ public class Receta {
     private Boolean cerrada;
     private Set<String> ingredientes;
     private String nombre;
-
+    
     /**
      * El constructor debe inicializar el objeto con un nombre
      * a eleccion y estado "ok" en falso.
@@ -29,8 +30,9 @@ public class Receta {
      * @param nombre El nombre de la receta.
      */
     public Receta (String nombre) {
-        // TODO - Implementar metodo
-
+        this.nombre = nombre;
+        this.cerrada = false;
+        this.ingredientes = new TreeSet<String>();
     }
 
     /**
@@ -42,8 +44,9 @@ public class Receta {
      * @param ingrediente El ingrediente a agregar.
      */
     public void addIngrediente(String ingrediente) {
-        // TODO - Implementar metodo
-
+        if(!this.cerrada) {
+            this.ingredientes.add(ingrediente);
+        }
     }
 
     /**
@@ -52,8 +55,7 @@ public class Receta {
      * @return La cantidad de ingredientes de la receta.
      */
     public int getCantidadIngredientes () {
-        // TODO - Implementar metodo
-        return -1;
+        return this.ingredientes.size();
     }
 
     /**
@@ -74,8 +76,11 @@ public class Receta {
      * @return true si se pudo cerrar la receta, false en caso contrario
      */
     public Boolean cerrarReceta () {
-        // TODO - Implementar metodo
-        return null;
+        if (this.getCantidadIngredientes() >= 2) {
+            this.cerrada = true;
+            return true;
+        }
+        return false;
     }
 
 
@@ -103,8 +108,22 @@ public class Receta {
      */
     @Override
     public String toString() {
-      // TODO - Implementar metodo
-        return null;
+        Iterator<String> ingredientesIterator = this.getIngredientes().iterator();
+        String recetaAsStringToPrint = "";
+
+        //ADDING THE HEADER OF THE RECETA
+        if(this.cerrada) {
+            recetaAsStringToPrint = recetaAsStringToPrint + "Receta " + this.getNombre() + " (completa)\nIngredientes:\n";
+        } else {
+            recetaAsStringToPrint = recetaAsStringToPrint + "Receta " + this.getNombre() + " (incompleta)\nIngredientes:\n";
+        }
+        
+        //ADDING THE BODY OF THE RECETA
+        while(ingredientesIterator.hasNext()) {
+            recetaAsStringToPrint = recetaAsStringToPrint + ingredientesIterator.next() + "\n";
+        }
+
+        return recetaAsStringToPrint;
     }
 
     /**
